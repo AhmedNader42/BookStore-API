@@ -1,10 +1,12 @@
-"use strict";
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
+'use strict';
+const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const validateEmail = require('../helpers/helpers');
 
 exports.signup = async (req, res) => {
     const { name, email, password } = req.body;
     console.log(req.body);
+    console.log(validateEmail(email));
     const newUser = new User({
         name,
         email,
@@ -14,7 +16,7 @@ exports.signup = async (req, res) => {
     const savedUser = await newUser.save();
     console.log(savedUser);
 
-    const newToken = jwt.sign({ id: savedUser._id }, "secretKey", {
+    const newToken = jwt.sign({ id: savedUser._id }, 'secretKey', {
         expiresIn: 86400,
     });
 
@@ -33,18 +35,18 @@ exports.logIn = async (req, res) => {
     if (!matchPassword) {
         return res.status(400).json({
             token: null,
-            message: "Invalid password",
+            message: 'Invalid password',
         });
     }
     console.log(userExists);
 
-    const token = jwt.sign({ id: userExists._id }, "secretKey", {
+    const token = jwt.sign({ id: userExists._id }, 'secretKey', {
         expiresIn: 86400,
     });
     return res.json({
         _id: userExists._id,
         name: userExists._id,
-        message: "Authentication Successful",
+        message: 'Authentication Successful',
         token: token,
     });
 };
